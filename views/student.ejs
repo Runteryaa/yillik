@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C5M9586SJQ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-C5M9586SJQ');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles.css">
+    <title><%= title %></title>
+
+    <meta name="title" content="<%= title %>" />
+    <meta name="description" content="<%= student.bio %>" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://yillik75.com.tr/" />
+    <meta property="og:site_name" content="Yillik75" />
+    <meta property="og:title" content="<%= title %>" />
+    <meta property="og:description" content="<%= student.bio %>" />
+    <meta property="og:image" content="<%= student.image %>" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://yillik75.com.tr/" />
+    <meta name="twitter:domain" content="yillik75.com.tr" />
+    <meta name="twitter:title" content="<%= title %>" />
+    <meta name="twitter:description" content="<%= student.bio %>" />
+    <meta name="twitter:image" content="<%= student.image %>" />
+    <meta name="twitter:image:alt" content="<%= student.name %>" />
+
+
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="Yıllık75" />
+    <link rel="manifest" href="/site.webmanifest" />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <a href="/"><h1>Yıllık75</h1></a>
+            <form action="/search" method="get" class="mezun-search">
+                <input type="text" name="q" placeholder="Ad, Numara veya Instagram" required>
+                <button type="submit">Ara</button>
+            </form>
+            <nav>
+                <ul>
+                    <li><a href="/">Ana Sayfa</a></li>
+                    <li><a href="/hakkinda">Hakkında</a></li>
+                    <li><a href="https://instagram.com/yillik75">Instagram</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="breadcrumb">
+        <a href="/">Ana Sayfa</a>
+        <span>></span>
+        <a href="/mezunlar/<%= year %>"><%= year %> Mezunları</a>
+        <span>></span>
+        <a href="/mezunlar/<%= year %>/<%= className %>"><%= className %></a>
+        <span>></span>
+        <span><%= student.number %></span>
+    </div>
+
+    <main>
+        <div class="profile">
+            <div class="pheader">
+                <div class="pphoto">
+                    <img src="<%= student.image %>" alt="<%= student.name %>">
+                </div>
+                <div class="socials">
+                    <% (student.socials || []).forEach(socials => { %>
+                            <a class="abtn" href="<%= socials.link %>" target="_blank"><%= socials.name %></a>
+                    <% }); %>
+                </div>
+            </div>
+            <div class="pinfo">
+                <h1><%= student.name %></h1>
+                <p class="bio"><%= student.bio %></p>
+                <div class="info"><h4>Bölüm:&nbsp;</h4><p><%= student.department %></p></div>
+
+                <section class="comments">
+                    <h2>Yorumlar</h2>
+                    <p class="comment-info">*Yorum eklemek/kaltırmak için bize instagram adresimizden <a href="https://instagram.com/yillik75" target="_blank">(@yillik75)</a> yazabilirsiniz. Bunun nedeni gerçekten siz olduğunuzu doğrulamak. (Yorum geçerli bir sebep sunulmadığı sürece kaldırılmaz.)</p>
+                    <div class="comment-list">
+                        <% if (student.comments && student.comments.length > 0) { %>
+                            <% student.comments.forEach(comment => { %>
+                                <div class="comment">
+                                    <p class="comment-text"><%= comment.text %></p>
+                                    <div class="comment-meta">
+                                        <a class="author" href="<%= comment.insta %>" target="_blank"><%= comment.author %></a>
+                                        <span class="date"><%= comment.date %></span>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        <% } else { %>
+                            <p class="comment">Henüz yorum yok.</p>
+                        <% } %>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+    <dialog id="first-visit">
+        <p>Yıllığımızı ilk ziyaret edişiniz, hoşgeldiniz!</p>
+        <p>Öncelikle bu projeye okulumuz tarafından izin verilmiştir. </p>
+        <p>Bu internet sitesi, 75YAL mezunlarının anılarını ve fotoğraflarını ücretsiz bir şekilde paylaşması için tasarlanmıştır. Ayrıca, mezunlar ile sosyal medya bağlantıları ile kolay bir şekilde bağlantı kurabilirsiniz.</p>
+        <br>
+        <p>Kendinizi ekletmek için bize instagram adresimizden <a href="https://instagram.com/yillik75">(@yillik75)</a> ulaşın.</p>
+        <br>
+        <p>Lütfen daha fazla bilgi için <a href="/hakkinda">/Hakkında</a> sayfasını göz atın edin.</p>
+        <button onclick="closeFirstVisit()">Kapat</button>
+    </dialog>
+    <script src="/script.js"></script>
+</body>
+</html>

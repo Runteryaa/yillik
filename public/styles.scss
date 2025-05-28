@@ -1,0 +1,362 @@
+$maincolor: #6c62ff;
+$dmaincolor: #4b44b2;
+$ddmaincolor: #2b2766;
+$bgcolor: #f9f9ff;
+$whitecolor: #fcfcfc;
+$lgray: #e0e0e5;
+$graycolor: #6f6f72;
+$dgraycolor: #313133;
+$blackcolor: #0c0c0c;
+
+$boxshadow: 0 2px 4px rgba(0, 0, 0, 0.331);
+@mixin mobile {
+   @media screen and (max-width: 850px) {
+     @content;
+   }
+}
+
+body {
+   font-family: Montserrat, Arial;
+   margin: 0;
+   padding: 0;
+   background-color: $bgcolor;
+   color: $dgraycolor;
+   overflow-y: scroll;
+}
+
+header {
+   background-color: $maincolor;
+   padding: 1rem;
+   color: $whitecolor;
+   text-align: center;
+
+   @include mobile {
+      padding: 0.5rem
+   }
+}
+
+.navbar {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   max-width: 1200px;
+   margin: 0 auto;
+   padding: 0 20px;
+
+   @include mobile {
+      flex-direction: column;
+   }
+
+   a {
+      text-decoration: none;
+   }
+   h1 {
+      color: $whitecolor;
+      margin: 0;
+      font-size: 24px;
+   }
+   ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+
+      li {
+
+         a {
+            color: $whitecolor;
+            text-decoration: none;
+         }
+      }
+   }
+   .mezun-search {
+      display: flex;
+      gap: 8px;
+      margin: 0;
+      align-items: center;
+
+      input[type=text] {
+         padding: 6px 10px;
+         border: 2px solid $dmaincolor;
+         border-radius: 4px;
+         font-size: 1rem;
+         width: 220px;
+         transition: border-color 0.2s;
+         background-color: $whitecolor;
+      }
+      input[type=text]:focus {
+         border-color: $ddmaincolor;
+         outline: none;
+      }
+      button {
+         padding: 8px 18px;
+         background: $dmaincolor;
+         color: $whitecolor;
+         border: none;
+         border-radius: 4px;
+         font-size: 1rem;
+         cursor: pointer;
+         transition: background 0.2s;
+      }
+      button:hover {
+         background: $ddmaincolor;
+      }
+   }
+}
+
+.breadcrumb {
+   padding: 1rem;
+   max-width: 1200px;
+   margin: 0 auto;
+
+   a {
+      color: #6c63ff;
+      text-decoration: none;
+   }
+   span {
+      margin: 0 0.5rem;
+      color: $graycolor;
+   }
+}
+
+h1 {
+   color: $maincolor;
+   margin: 0px;
+}
+
+h2 {
+   color: $maincolor;
+   margin: 0px;
+}
+
+h3 {
+   color: $maincolor;
+   margin: 0px;
+}
+
+h4 {
+   color: $maincolor;
+   margin: 0px;
+}
+
+a.abtn[target="_blank"] {
+   color: $ddmaincolor;
+}
+
+.abtn {
+   padding: .2em .4em;
+   background: $dmaincolor;
+   color: $whitecolor !important;
+   border-radius: 4px;
+   text-decoration: none;
+   transition: background 0.2s;
+
+   &:hover {
+      background: $ddmaincolor;
+   }
+}
+
+.intro {
+   text-align: center;
+   padding: 2rem;
+   max-width: 800px;
+   margin: 0 auto;
+
+   h1 {
+      margin: 0px;
+      font-size: 38px;
+   }
+   p {
+      color: $dgraycolor;
+      font-size: 1.1rem;
+   }
+}
+
+.content {
+   max-width: 1200px;
+   margin: 0 auto;
+   padding: 2rem;
+   text-align: center;
+   
+   h2 {
+      color: $maincolor;
+      font-size: 28px;
+      margin-bottom: 1rem;
+
+      &:nth-child(n+2) {
+         margin-top: 3rem;
+      }
+   }
+   p {
+      margin: 0;
+   }
+}
+
+.contentbox {
+   box-shadow: $boxshadow;
+   margin: 1rem 5rem;
+   padding: 2rem 2rem;
+   border-radius: 8px;
+
+   @include mobile {
+      margin: 0 1rem 1rem 1rem;
+      padding: 1rem 1rem;
+   }
+}
+
+.cards {
+   display: flex; 
+   // display: grid;
+   // grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+   gap: 2rem;
+   justify-content: center;
+   flex-wrap: wrap;
+   flex-direction: row;
+
+   @include mobile {
+      flex-direction: column;
+   }
+
+   .card {
+      background: $bgcolor;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: $boxshadow;
+      transition: transform 0.2s;
+      will-change: transform;
+      padding: 0px;
+
+      a {
+         color: inherit;
+         display: block;
+         text-decoration: none;
+      }
+      img {
+         width: 300px;
+         height: 300px;
+         object-fit: cover;
+
+         @include mobile {
+            width: 100%;
+         }
+      }
+      h4 {
+         margin: 1rem;
+         color: $dgraycolor;
+         font-size: 1.2rem;
+         text-align: center;
+      }
+      p {
+         margin: 0.5rem 1rem 1rem;
+         color: $graycolor;
+         text-align: center;
+         font-size: 0.9rem;
+      }
+      .number {
+         color: $maincolor;
+         font-weight: 500;
+      }
+   }
+   .card:hover {
+      transform: scale(1.03) translateY(-5px);
+   }
+}
+
+
+.profile {
+   display: flex;
+   gap: 2rem;
+   background: $bgcolor;
+   border-radius: 8px;
+   box-shadow: $boxshadow;
+   margin: 1rem 5rem;
+   padding: 2rem 2rem;
+
+   @include mobile {
+      display: block;
+      flex-direction: column;
+      margin: 0 1rem 1rem 1rem;
+      padding: 1rem 1rem;
+
+      .pinfo {
+         width: 100%;
+      }
+      .pphoto img {
+         width: 100%;
+      }
+   }
+
+   img {
+      width: 23rem;
+      border-radius: 8px;
+   }
+   .socials {
+      margin: .5rem 0 1rem 0;
+   }
+   .bio {
+      color: $dgraycolor;
+      font-size: 1.1rem;
+      margin: 0.5rem 0 1rem 0;
+   }
+   .comment-info {
+      font-size: 12px;
+   }
+   .comment-list {
+      width: 100%;
+   }
+   .comment {
+      background: $lgray;
+      border-radius: 8px;
+      padding: .5rem;
+      margin-bottom: 1rem;
+   }
+   .comment-text {
+      color: $dgraycolor;
+      font-style: italic;
+      margin: 0 0.5rem 0.5rem 0;
+   }
+   .comment-meta {
+      display: flex;
+      justify-content: space-between;
+      color: $graycolor;
+      font-size: 0.9rem;
+   }
+   .author {
+      color: $dmaincolor;
+   }
+   .info {
+      display: flex;
+      align-items: baseline;
+
+      p {
+         color: $dgraycolor;
+         font-size: 1rem;
+         margin: 0;
+      }  
+   }
+}
+
+#first-visit {
+   display: none;
+   width: 500px;
+   position: fixed;
+   background: $maincolor;
+   box-shadow: $boxshadow;
+   text-align: center;
+   padding: 20px;
+   top: 30%;
+   z-index: 9999;
+   border-radius: 8px;
+   color: $blackcolor;
+
+   @include mobile {
+      width: 75%;
+      top: 5em;
+      height: auto;
+   }
+   a {
+      color: $whitecolor;
+   }
+}
