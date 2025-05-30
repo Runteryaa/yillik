@@ -73,21 +73,20 @@
             <p>Mezun olduğunuz okuldan arkadaşlarınızın anılarını, fotoğraflarını ve yorumlarını keşfedin. Yıllar sonra bile birbirinizi bulun!</p>
         </section>
         <section class="content">
-            <h2>Okullar</h2>
+            <h2>Mezuniyet Yılları</h2>
             <div class="cards">
-  <% Object.entries(schools).forEach(([schoolName, schoolData]) => { %>
-    <div class="card">
-      <a href="/<%= schoolName %>">
-        <img src="<%= schoolData.image || '/placeholder.svg' %>" alt="<%= schoolName %> Logosu">
-        <h4><%= schoolName.toUpperCase() %></h4>
-        <% if (schoolData.description) { %>
-          <p><%= schoolData.description %></p>
-        <% } %>
-      </a>
-    </div>
-  <% }); %>
-</div>
-
+                <% years
+                    .slice()
+                    .sort((a, b) => b.year - a.year)
+                    .forEach(year => { %>
+                    <div class="card">
+                        <a href="/mezunlar/<%= year.year %>">
+                            <img src="<%= year.image %>" alt="<%= year.year %> Mezunları">
+                            <h4><%= year.year %> Mezunları</h4>
+                        </a>
+                    </div>
+                <% }); %>
+            </div>
         </section>
     </main>
     <div class="content">

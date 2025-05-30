@@ -68,42 +68,34 @@
     <div class="breadcrumb">
         <a href="/">Ana Sayfa</a>
         <span>></span>
-        <a href="/mezunlar/<%= year %>"><%= year %> Mezunları</a>
+        <a href="/<%= school %>"><%= school %></a>
         <span>></span>
-        <span><%= className %></span>
-        <span></span>
+        <span><%= year %></span>
     </div>
 
     <main>
         <section class="intro">
-            <h1><%= year %> - <%= className %></h1>
-            <p>Bu sınıftaki öğrencilere göz atın ve anıları paylaşın.</p>
+            <h1><%= year %> Mezunları</h1>
+            <p>Bu yıla ait sınıfları görüntüleyin ve anıları keşfedin.</p>
         </section>
 
         <section class="content">
-            <h2>Öğrenciler</h2>
-            <div class="cards">
-                <% (students || [])
-                    .slice() // orijinal diziyi bozmamak için kopya al
-                    .sort((a, b) => a.number - b.number) // öğrenci numarasına göre küçükten büyüğe sırala
-                    .forEach(student => { %>
-                    <div class="card">
-                        <a href="/mezunlar/<%= year %>/<%= className %>/<%= student.number %>">
-                            <img src="<%= student.image %>" alt="<%= student.name %>">
-                            <h4><%= student.name %></h4>
-                            <p><span class="number"><%= student.number %></span> • <%= (student.comments && student.comments.length) ? student.comments.length : 0 %> Yorum</p>
-                        </a>
-                    </div>
-                <% }); %>
-            </div>
-            <% if (!students || students.length === 0) { %>
-                <p>Bu sınıfta öğrenci bulunamadı.</p>
-            <% } %>
-            <h2>Fotoğraflar</h2>
-            <div class="cards">
+            <h2>Sınıflar</h2>
+<div class="cards">
+  <% Object.entries(classes).forEach(([className, classData]) => { %>
+    <div class="card">
+      <a href="/<%= school %>/<%= year %>/<%= className %>">
+        <img src="<%= classData.image || '/placeholder.svg' %>" alt="<%= className %> Sınıfı">
+        <h4><%= className %></h4>
+        <p><%= Array.isArray(classData.students) ? classData.students.length : 0 %> Öğrenci</p>
+      </a>
+    </div>
+  <% }); %>
+</div>
 
+            <h2>Fotoğraflar</h2>
+            <div class="photos">
             </div>
-            <p>Yıl içinde çekilmiş fotoğraflar eklenecektir.<br>Fotoğraflarınızı instagram adresimize <a href="http://instagram.com/yillik75">(@yillik75)</a> gönderebilirsiniz</p>
         </section>
     </main>
     <dialog id="first-visit">

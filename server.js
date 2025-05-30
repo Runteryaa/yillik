@@ -45,92 +45,88 @@ admin.initializeApp({
 });
 const db = admin.database();
 
-app.get('/', async (req, res) => {
-    const snapshot = await db.ref('/').once('value');
-    const studentData = snapshot.val();
-
-    const years = Object.entries(studentData.years).map(([year, yearData]) => ({
-        year,
-        image: yearData.image
-    }));
-
-    res.render('index', { 
-        title: 'Ana Sayfa | Yıllık 75',
-        years
-    });
-});
-
 app.get('/hakkinda', (req, res) => {
     res.render('hakkinda', { 
-        title: 'Hakkında | Yıllık 75'
+        title: 'Hakkında | Yillik.com.tr'
     });
 });
 
-app.get('/mezunlar', (req, res) => {
-    res.redirect('/')
+
+// Show all schools on homepage
+app.get('/', async (req, res) => {
+  const snapshot = await db.ref('/schools').once('value');
+  const schools = snapshot.val() || {};
+
+  res.render('index', {
+    title: 'Okullar | Yillik.com.tr',
+    schools
+  });
 });
 
-app.get('/mezunlar/:year', async (req, res) => {
-    const year = req.params.year;
-    const snapshot = await db.ref('/').once('value');
-    const studentData = snapshot.val();
-    const yearData = studentData.years[year];
+// Show years for selected school
+app.get('/:school', async (req, res) => {
+  const { school } = req.params;
+  const snapshot = await db.ref(`/schools/${school}/years`).once('value');
+  const years = snapshot.val() || {};
 
-    if (!yearData) {
-        return res.status(404).render('404', { title: 'Sayfa Bulunamadı | Yıllık 75' });
-    }
-
-    const classes = Object.entries(yearData.classes).map(([className, classData]) => ({
-        name: className,
-        students: classData.students ? classData.students.length : 0,
-        image: classData.image
-    }));
-
-    res.render('year', { 
-        title: `${year} Mezunları | Yıllık 75`, 
-        year,
-        yearImage: yearData.image,
-        classes
-    });
+  res.render('years', {
+    title: `${school} Yıllar | Yillik.com.tr`,
+    school,
+    years
+  });
 });
 
-app.get('/mezunlar/:year/:className', async (req, res) => {
-    const { year, className } = req.params;
-    const snapshot = await db.ref('/').once('value');
-    const studentData = snapshot.val();
-    const classData = studentData.years[year]?.classes?.[className];
+// Show classes for given school and year
+app.get('/:school/:year', async (req, res) => {
+  const { school, year } = req.params;
+  const snapshot = await db.ref(`/schools/${school}/years/${year}/classes`).once('value');
+  const classes = snapshot.val() || {};
 
-    if (!classData) {
-        return res.status(404).render('404', { title: 'Sayfa Bulunamadı | Yıllık 75' });
-    }
-
-    res.render('classes', { 
-        title: `${year} - ${className} Mezunları | Yıllık 75`, 
-        year, 
-        className,
-        classImage: classData.image,
-        students: classData.students
-    });
+  res.render('classes', {
+    title: `${school} ${year} Sınıfları | Yillik.com.tr`,
+    school,
+    year,
+    classes
+  });
 });
 
-app.get('/mezunlar/:year/:className/:studentNumber', async (req, res) => {
-    const { year, className, studentNumber } = req.params;
-    const snapshot = await db.ref('/').once('value');
-    const studentData = snapshot.val();
-    const students = studentData.years[year]?.classes?.[className]?.students;
-    const student = students?.find(s => s.number === studentNumber);
+// Show students for class
+app.get('/:school/:year/:className', async (req, res) => {
+  const { school, year, className } = req.params;
+  const snapshot = await db.ref(`/schools/${school}/years/${year}/classes/${className}/students`).once('value');
+  const students = snapshot.val() || [];
 
-    if (!student) {
-        return res.status(404).render('404', { title: 'Sayfa Bulunamadı | Yıllık 75' });
-    }
-
-    res.render('student', { 
-        title: `${year} - ${className} - ${student.name}`,
-        year,
-        className,
-        student
-    });
+  res.render('students', {
+    title: `${school} ${year} ${className} Öğrenciler | Yillik.com.tr`,
+    school,
+    year,
+    className,
+    students
+  });
 });
+
+// Show single student details
+app.get('/:school/:year/:className/:studentNumber', async (req, res) => {
+  const { school, year, className, studentNumber } = req.params;
+  const snapshot = await db.ref(`/schools/${school}/years/${year}/classes/${className}/students`).once('value');
+  const students = snapshot.val() || [];
+
+  const student = students.find(s => s.number === studentNumber);
+  if (!student) {
+    return res.status(404).send('Öğrenci bulunamadı');
+  }
+
+  res.render('student', {
+    title: `${student.name} | ${school} ${year} ${className}`,
+    school,
+    year,
+    className,
+    student
+  });
+});
+
+
+
 
 app.get('/search', async (req, res) => {
     const query = req.query.q?.toLowerCase().trim();
@@ -138,7 +134,7 @@ app.get('/search', async (req, res) => {
     const studentData = snapshot.val();
 
     if (!query) {
-        return res.render('search', { title: 'Mezun Ara | Yıllık 75', results: [], query: '' });
+        return res.render('search', { title: 'Mezun Ara | Yillik.com.tr', results: [], query: '' });
     }
 
     let results = [];
@@ -160,7 +156,7 @@ app.get('/search', async (req, res) => {
         }
     }
 
-    res.render('search', { title: 'Mezun Ara | Yıllık 75', results, query });
+    res.render('search', { title: 'Mezun Ara | Yillik.com.tr', results, query });
 });
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
@@ -343,7 +339,7 @@ app.get('/admin/logout', (req, res) => {
 });
 
 app.use((req, res) => {
-    res.status(404).render('404', { title: 'Sayfa Bulunamadı' });
+    res.status(404).render('404', { title: 'Sayfa Bulunamadı | Yillik.com.tr' });
 });
 
 app.listen(PORT, () => {
