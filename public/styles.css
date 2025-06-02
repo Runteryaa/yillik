@@ -331,4 +331,8 @@ a.abtn[target=_blank] {
 }
 #first-visit a {
   color: #fcfcfc;
+}
+
+.fakebreadcrumb {
+  color: #6f6f72 !important;
 }/*# sourceMappingURL=styles.css.map */

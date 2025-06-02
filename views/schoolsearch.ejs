@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="tr">
 <head>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-C5M9586SJQ"></script>
@@ -34,7 +34,6 @@
     <meta name="twitter:image" content="/s/favicon-96x96.png" />
     <meta name="twitter:image:alt" content="Yıllık75" />
     
-
     <link rel="icon" type="image/png" href="/s/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/x-icon" href="/s/favicon.ico">
     <link rel="icon" type="image/svg+xml" href="/s/favicon.svg" />
@@ -51,8 +50,8 @@
     <header>
         <div class="navbar">
             <a href="/"><h1>Yıllık75</h1></a>
-            <form action="/d/<%= school %>/search" method="get" class="mezun-search">
-                <input type="text" name="q" placeholder="Ad, Numara veya Instagram" required>
+            <form action="/search" method="get" class="mezun-search">
+                <input type="text" name="q" placeholder="Okul Adı" required>
                 <button type="submit">Ara</button>
             </form>
             <nav>
@@ -68,55 +67,49 @@
     <div class="breadcrumb">
         <a href="/">Ana Sayfa</a>
         <span>></span>
-        <a href="/d/<%= school %>"><%= school.toUpperCase() %></a>
-        <span>></span>
-        <a href="/d/<%= school %>/<%= year %>"><%= year %></a>
-        <span>></span>
-        <a class="fakebreadcrumb"><%= className %></a>
+        <a class="fakebreadcrumb">Okul Araması</a>
     </div>
 
     <main>
-        <section class="intro">
-            <h1><%= year %> - <%= className %></h1>
-            <p>Bu sınıftaki öğrencilere göz atın ve anıları paylaşın.</p>
-        </section>
+  <section class="intro">
+    <h2>Okul Araması</h2>
+  </section>
 
-        <section class="content">
-            <h2>Öğrenciler</h2>
-            <div class="cards">
-                <% (students || [])
-                    .slice() // orijinal diziyi bozmamak için kopya al
-                    .sort((a, b) => a.number - b.number) // öğrenci numarasına göre küçükten büyüğe sırala
-                    .forEach(student => { %>
-                    <div class="card">
-                        <a href="/d/<%= school %>/<%= year %>/<%= className %>/<%= student.number %>">
-                            <img src="<%= student.image || '/s/placeholder.svg' %>" alt="<%= student.name %>">
-                            <h4><%= student.name %></h4>
-                            <p><span class="number"><%= student.number %></span> • <%= (student.comments && student.comments.length) ? student.comments.length : 0 %> Yorum</p>
-                        </a>
-                    </div>
-                <% }); %>
-            </div>
-            <% if (!students || students.length === 0) { %>
-                <p>Bu sınıfta öğrenci bulunamadı.</p>
-            <% } %>
-            <h2>Fotoğraflar</h2>
-            <div class="cards">
+  <section class="content">
+    <% if (results.length > 0 && typeof query !== 'undefined') { %>
+      <p>"<%= query %>" için <%= results.length %> okul bulundu.</p>
+    <% } %>
 
-            </div>
-            <p>Yıl içinde çekilmiş fotoğraflar eklenecektir.<br>Fotoğraflarınızı instagram adresimize <a href="http://instagram.com/yillik75">(@yillik75)</a> gönderebilirsiniz</p>
-        </section>
-    </main>
-    <dialog id="first-visit">
-        <p>Yıllığımızı ilk ziyaret edişiniz, hoşgeldiniz!</p>
-        <p>Öncelikle bu projeye okulumuz tarafından izin verilmiştir. </p>
-        <p>Bu internet sitesi, 75YAL mezunlarının anılarını ve fotoğraflarını ücretsiz bir şekilde paylaşması için tasarlanmıştır. Ayrıca, mezunlar ile sosyal medya bağlantıları ile kolay bir şekilde bağlantı kurabilirsiniz.</p>
-        <br>
-        <p>Kendinizi ekletmek için bize instagram adresimizden <a href="https://instagram.com/yillik75">(@yillik75)</a> ulaşın.</p>
-        <br>
-        <p>Lütfen daha fazla bilgi için <a href="/hakkinda">/Hakkında</a> sayfasını göz atın edin.</p>
-        <button onclick="closeFirstVisit()">Kapat</button>
-    </dialog>
-    <script src="/s/script.js"></script>
+    <% if (results.length > 0) { %>
+      <div class="cards">
+  <% results.forEach(result => { %>
+    <div class="card">
+      <a href="/d/<%= result.key %>">
+        <img src="<%= result.image || "/s/placeholder.svg"%>" alt="<%= result.name %>" class="school-image">
+        <h4><%= result.name %></h4>
+        <p><%= result.yearCount %> mezuniyet yılı</p>
+      </a>
+    </div>
+  <% }) %>
+</div>
+    <% } else if (typeof query !== 'undefined') { %>
+      <p>Sonuç bulunamadı.</p>
+    <% } %>
+    </section>
+</main>
+
+
+
+<dialog id="first-visit">
+    <p>Yıllığımızı ilk ziyaret edişiniz, hoşgeldiniz!</p>
+    <p>Öncelikle bu projeye okulumuz tarafından izin verilmiştir. </p>
+    <p>Bu internet sitesi, 75YAL mezunlarının anılarını ve fotoğraflarını ücretsiz bir şekilde paylaşması için tasarlanmıştır. Ayrıca, mezunlar ile sosyal medya bağlantıları ile kolay bir şekilde bağlantı kurabilirsiniz.</p>
+    <br>
+    <p>Kendinizi ekletmek için bize instagram adresimizden <a href="https://instagram.com/yillik75">(@yillik75)</a> ulaşın.</p>
+    <br>
+    <p>Lütfen daha fazla bilgi için <a href="/hakkinda">/Hakkında</a> sayfasını göz atın edin.</p>
+    <button onclick="closeFirstVisit()">Kapat</button>
+</dialog>
+<script src="/s/script.js"></script>
 </body>
 </html>

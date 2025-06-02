@@ -11,14 +11,16 @@ require('dotenv').config();
 const cloudinary = require('cloudinary').v2;
 const rateLimit = require('express-rate-limit');
 
+
 cloudinary.config();
 
 const app = express();
+app.use('/s', express.static(path.join(__dirname, 'public')));
+
 const PORT = process.env.PORT || 3000;
 const upload = multer({ storage: multer.memoryStorage() });
 
 app.use(cors());
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.set('view engine', 'ejs');
@@ -63,8 +65,77 @@ app.get('/', async (req, res) => {
   });
 });
 
+
+app.get('/search', async (req, res) => {
+  const query = req.query.q?.toLowerCase().trim() || '';
+  const snapshot = await db.ref('/schools').once('value');
+  const schools = snapshot.val() || {};
+  const results = [];
+
+  for (const [key, data] of Object.entries(schools)) {
+    const longName = data.name?.toLowerCase() || '';
+    const image = data.image || '/s/placeholder.svg';
+
+    if (key.includes(query) || longName.includes(query)) {
+      results.push({
+        key,
+        name: data.name || key,
+        image,
+        yearCount: data.years ? Object.keys(data.years).length : 0
+      });
+    }
+  }
+
+  res.render('schoolsearch', {
+    title: `"${query}" için okul arama`,
+    results,
+    query
+  });
+});
+
+
+
+app.get('/d/:school/search', async (req, res) => {
+  const { school } = req.params;
+  const query = req.query.q?.toLowerCase();
+  if (!query) return res.redirect(`/d/${school}`);
+
+  const results = [];
+  const schoolRef = db.ref(`/schools/${school.toLowerCase()}/years`);
+  const yearsSnapshot = await schoolRef.once('value');
+  const years = yearsSnapshot.val() || {};
+
+  for (const [yearKey, yearData] of Object.entries(years)) {
+    const classes = yearData.classes || {};
+    for (const [classKey, classData] of Object.entries(classes)) {
+      const students = classData.students || {};
+      for (const [studentKey, student] of Object.entries(students)) {
+        const name = student.name?.toLowerCase() || '';
+        const number = student.number?.toString() || '';
+        const instagram = student.instagram?.toLowerCase() || '';
+
+        if (name.includes(query) || number.includes(query) || instagram.includes(query)) {
+          results.push({
+            student,
+            year: yearKey,
+            className: classKey
+          });
+        }
+      }
+    }
+  }
+
+  res.render('studentsearch', {
+    title: `"${query}" için ${school} öğrencileri araması | Yillik75`,
+    query,
+    results,
+    type: 'student',
+    school
+  });
+});
+
 // Show years for selected school
-app.get('/:school', async (req, res) => {
+app.get('/d/:school', async (req, res) => {
   const { school } = req.params;
   const snapshot = await db.ref(`/schools/${school}/years`).once('value');
   const years = snapshot.val() || {};
@@ -77,7 +148,7 @@ app.get('/:school', async (req, res) => {
 });
 
 // Show classes for given school and year
-app.get('/:school/:year', async (req, res) => {
+app.get('/d/:school/:year', async (req, res) => {
   const { school, year } = req.params;
   const snapshot = await db.ref(`/schools/${school}/years/${year}/classes`).once('value');
   const classes = snapshot.val() || {};
@@ -91,7 +162,7 @@ app.get('/:school/:year', async (req, res) => {
 });
 
 // Show students for class
-app.get('/:school/:year/:className', async (req, res) => {
+app.get('/d/:school/:year/:className', async (req, res) => {
   const { school, year, className } = req.params;
   const snapshot = await db.ref(`/schools/${school}/years/${year}/classes/${className}/students`).once('value');
   const students = snapshot.val() || [];
@@ -106,7 +177,7 @@ app.get('/:school/:year/:className', async (req, res) => {
 });
 
 // Show single student details
-app.get('/:school/:year/:className/:studentNumber', async (req, res) => {
+app.get('/d/:school/:year/:className/:studentNumber', async (req, res) => {
   const { school, year, className, studentNumber } = req.params;
   const snapshot = await db.ref(`/schools/${school}/years/${year}/classes/${className}/students`).once('value');
   const students = snapshot.val() || [];
@@ -125,39 +196,6 @@ app.get('/:school/:year/:className/:studentNumber', async (req, res) => {
   });
 });
 
-
-
-
-app.get('/search', async (req, res) => {
-    const query = req.query.q?.toLowerCase().trim();
-    const snapshot = await db.ref('/').once('value');
-    const studentData = snapshot.val();
-
-    if (!query) {
-        return res.render('search', { title: 'Mezun Ara | Yillik.com.tr', results: [], query: '' });
-    }
-
-    let results = [];
-    for (const [year, yearData] of Object.entries(studentData.years)) {
-        for (const [className, classData] of Object.entries(yearData.classes)) {
-            for (const student of (classData.students || [])) {
-                if (
-                    student.name.toLowerCase().includes(query) ||
-                    student.number === query ||
-                    ( Array.isArray(student.socials) && student.socials.some( s => s.name.toLowerCase() === 'instagram' && ( (s.link && s.link.toLowerCase().includes(query)) || (s.username && s.username.toLowerCase().includes(query)) ) ) ) ) {
-                    
-                    results.push({
-                        year,
-                        className,
-                        student
-                    });
-                }
-            }
-        }
-    }
-
-    res.render('search', { title: 'Mezun Ara | Yillik.com.tr', results, query });
-});
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
 function parseCookies(req) {

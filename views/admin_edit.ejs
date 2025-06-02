@@ -250,7 +250,7 @@ async function addStudent() {
   const student = {
     number: document.getElementById('number').value,
     name: document.getElementById('name').value,
-    image: document.getElementById('image').value || "/placeholder.svg",
+    image: document.getElementById('image').value || "/s/placeholder.svg",
     bio: document.getElementById('bio').value,
     department: document.getElementById('department').value,
     socials: socials
@@ -410,7 +410,7 @@ function updateStudent() {
     ...students[index],
     number: document.getElementById('number').value,
     name: document.getElementById('name').value,
-    image: document.getElementById('image').value || "/placeholder.svg",
+    image: document.getElementById('image').value || "/s/placeholder.svg",
     bio: document.getElementById('bio').value,
     department: document.getElementById('department').value,
     socials: socials
@@ -454,7 +454,7 @@ async function addYear() {
   const year = prompt('Yeni yıl girin (ör: 2026):');
   if (!year) return;
   if (!jsonData.years[year]) {
-    jsonData.years[year] = { image: "/placeholder.svg", classes: {} };
+    jsonData.years[year] = { image: "/s/placeholder.svg", classes: {} };
     await saveToDB();
     await loadJSON();
     alert('Yeni yıl eklendi!');
@@ -472,7 +472,7 @@ async function addClass() {
   const className = prompt('Yeni sınıf adı girin (ör: 12-G):');
   if (!className) return;
   if (!jsonData.years[year].classes[className]) {
-    jsonData.years[year].classes[className] = { image: "/placeholder.svg", students: [] };
+    jsonData.years[year].classes[className] = { image: "/s/placeholder.svg", students: [] };
     await saveToDB();
     await loadJSON();
     alert('Yeni sınıf eklendi!');
