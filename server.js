@@ -67,6 +67,16 @@ app.get('/kullanim', (req, res) => {
 });
 
 
+// Serve ads.txt from root
+app.get('/ads.txt', (req, res) => {
+    res.sendFile(path.join(__dirname, 'ads.txt'));
+});
+
+// Serve robots.txt from root
+app.get('/robots.txt', (req, res) => {
+    res.sendFile(path.join(__dirname, 'robots.txt'));
+});
+
 // Show all schools on homepage
 app.get('/', async (req, res) => {
   const snapshot = await db.ref('/schools').once('value');
