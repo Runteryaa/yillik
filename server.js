@@ -69,12 +69,12 @@ app.get('/kullanim', (req, res) => {
 
 // Serve ads.txt from root
 app.get('/ads.txt', (req, res) => {
-    res.sendFile(path.join(__dirname, 'ads.txt'));
+    res.sendFile(path.join(__dirname, 'public/ads.txt'));
 });
 
 // Serve robots.txt from root
 app.get('/robots.txt', (req, res) => {
-    res.sendFile(path.join(__dirname, 'robots.txt'));
+    res.sendFile(path.join(__dirname, 'public/robots.txt'));
 });
 
 // Show all schools on homepage
