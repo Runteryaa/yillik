@@ -6,6 +6,7 @@ const axios = require('axios');
 const multer = require('multer');
 const admin = require('firebase-admin');
 const crypto = require('crypto');
+const bcrypt = require('bcrypt');
 const FormData = require('form-data');
 require('dotenv').config();
 const cloudinary = require('cloudinary').v2;
@@ -50,6 +51,18 @@ const db = admin.database();
 app.get('/hakkinda', (req, res) => {
     res.render('hakkinda', { 
         title: 'Hakkında | Yillik.com.tr'
+    });
+});
+
+app.get('/gizlilik', (req, res) => {
+    res.render('gizlilik', { 
+        title: 'Gizlilik Politikası | Yillik.com.tr'
+    });
+});
+
+app.get('/kullanim', (req, res) => {
+    res.render('kullanim', { 
+        title: 'Kullanim Şartları | Yillik.com.tr'
     });
 });
 
@@ -374,6 +387,37 @@ app.get('/admin/logout', (req, res) => {
     ]);
 
     res.redirect('/admin/login');
+});
+
+// School admin login page
+app.get('/admin/:school/login', (req, res) => {
+    res.render('admin_login', { error: null, school: req.params.school });
+});
+
+// School admin login POST
+app.post('/admin/:school/login', async (req, res) => {
+    const { school } = req.params;
+    const { password } = req.body;
+
+    // Get hashed password from /school_admins
+    const adminSnap = await db.ref(`/school_admins/${school}`).once('value');
+    const adminData = adminSnap.val();
+
+    if (!adminData || !adminData.password) {
+        return res.render('admin_login', { error: 'Okul bulunamadı veya şifre ayarlanmamış.', school });
+    }
+
+    const match = await bcrypt.compare(password, adminData.password);
+    if (match) {
+        const sessionToken = crypto.randomBytes(32).toString('hex');
+        const isProd = process.env.NODE_ENV === 'production';
+        res.setHeader('Set-Cookie', [
+            `school_admin_${school}=${sessionToken}; Path=/; HttpOnly; SameSite=Strict${isProd ? '; Secure' : ''}`
+        ]);
+        // Optionally: Save sessionToken in DB for session tracking
+        return res.redirect(`/admin/${school}`);
+    }
+    res.render('admin_login', { error: 'Hatalı şifre', school });
 });
 
 app.use((req, res) => {
